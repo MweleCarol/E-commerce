@@ -12,11 +12,14 @@ const getDefaultCart = () => {
 }
 
 const ShopContextProvider = (props) => {
+
+  const backendUrl = "http://localhost:4000/api";
+  
  
   const [all_product,setAll_Product] = useState([]);
 
   useEffect(()=>{
-     fetch('http://localhost:4000/allproducts')
+     fetch(`${backendUrl}/products/allproducts`)
      .then((response)=>response.json())
      .then((data)=>setAll_Product(data))
   },[]);
