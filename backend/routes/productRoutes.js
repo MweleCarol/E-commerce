@@ -5,10 +5,10 @@ import { protect } from '../middleware/auth.js';
 //the protect functionality is for the token authentication to restrict access to certain routes
 const productRouter = express.Router();
 
-productRouter.post('/addproduct', protect, addProduct);
+productRouter.post('/add-product', addProduct);
 
-productRouter.post('/removeproduct', protect,  removeProduct);
+productRouter.post('/remove-product',  removeProduct);
 
-productRouter.get('/allproducts', getAllProducts);
+productRouter.get('/all-products', getAllProducts);
 
 export default productRouter;

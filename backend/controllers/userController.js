@@ -49,6 +49,7 @@ const registerUser = async (req, res) => {
     const token = createToken(user._id);
 
     res.status(201).json({
+      success: true,
       user: {
         _id: user._id,
         name: user.name,
@@ -64,40 +65,55 @@ const registerUser = async (req, res) => {
   }
 };
 
-
 //login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   // Validate input
   if (!email || !password) {
-    return res.status(400).json({ error: "Email and password are required" });
+    return res.status(400).json({
+      success: false,
+      error: "Please provide email and password",
+    });
   }
 
   try {
     // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res.status(400).json({
+        success: false,
+        error: "Invalid credentials",
+      });
     }
 
     // Check password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res.status(400).json({
+        success: false,
+        error: "Invalid credentials",
+      });
     }
 
     // Create token
     const token = createToken(user._id);
 
-    res.status(200).json({ user: { id: user._id, name: user.name, email: user.email }, token });
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+      token,
+    });
   } catch (error) {
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({
+      success: false,
+      error: "Server error",
+    });
   }
-};  
-
-
+};
 
 export { registerUser, loginUser };
-
-

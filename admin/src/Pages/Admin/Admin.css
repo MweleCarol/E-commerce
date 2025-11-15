@@ -1,8 +1,47 @@
-.admin{
-    display: flex;
+/* Admin.css */
+.admin {
+  display: flex;
+  min-height: 100vh;
 }
-@media(max-width:800px){
-    .admin{
-        flex-direction: column;
-    }
+
+.admin-content {
+  flex: 1;
+  padding: 2rem;
+  background: #f8fafc;
+}
+
+.admin-welcome {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #64748b;
+}
+
+.error-state {
+  text-align: center;
+  padding: 2rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+}
+
+.error-state button {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .admin {
+    flex-direction: column;
+  }
+  
+  .admin-content {
+    padding: 1rem;
+  }
 }
