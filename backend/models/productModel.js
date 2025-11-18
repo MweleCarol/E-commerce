@@ -22,10 +22,12 @@ const productSchema = new mongoose.Schema({
     new_price:{
         type: Number,
         required: true,
+        min: 0,
     },
     old_price:{
         type: Number,
         required: true,
+        min: 0,
     },
     date:{
         type:Date,

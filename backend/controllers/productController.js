@@ -20,7 +20,46 @@ const handleError = (res, error, message = "An error occurred") => {
 //restrict access to authenticated users only
 
 const addProduct = async (req, res) => {
+
+  //check if file is present
+  if (!req.file) {
+    return res.status(400).json({
+      success: false,
+      message: "No file uploaded",
+    });
+  }
+
+  let image_filename = `${req.file.filename}`;
+
+  console.log("Form body data:", req.body);
+
   try {
+
+    //validate required fields
+    const requiredFields = ['name', 'category', 'new_price', 'old_price'];
+    const missingFields = requiredFields.filter(field => !req.body[field]);
+
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Missing required fields: ${missingFields.join(', ')}`,
+      });
+    }
+
+    //convert price fields to numbers
+    const new_price = parseFloat(req.body.new_price);
+    const old_price = parseFloat(req.body.old_price);
+
+    //validate price conversion
+    if (isNaN(new_price) || isNaN(old_price)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid price format. Prices must be numbers.",
+      });
+    }
+
+
+    //generate unique id for the product
     let products = await Product.find({});
     let id;
     if (products.length > 0) {
@@ -31,25 +70,25 @@ const addProduct = async (req, res) => {
     } else {
       id = 1;
     }
+
+    //create a new product with data types
     const product = new Product({
       id: id,
       name: req.body.name,
-      image: req.body.image,
+      image : image_filename,
       category: req.body.category,
-      new_price: req.body.new_price,
-      old_price: req.body.old_price,
+      new_price: new_price,
+      old_price: old_price,
+
     });
-    console.log(product);
+    console.log("Product to save",product);
     await product.save();
 
     res.json({
       //to get response from front-end
       success: true,
-      name: req.body.name,
-      image: req.body.image,
-      category: req.body.category,
-      new_price: req.body.new_price,
-      old_price: req.body.old_price,
+      message: "Product added successfully",
+      product: product,
     });
   } catch (error) {
     handleError(res, error, "Failed to add product");
@@ -78,9 +117,16 @@ const removeProduct = async (req, res) => {
 const getAllProducts = async (req, res) => {
   try {
     let products = await Product.find({});
+    
+    // Add full image URL to each product
+    const productsWithImageUrls = products.map(product => ({
+      ...product.toObject(),
+      image_url: `http://localhost:4000/images/${product.image}`
+    }));
+
     res.json({
       success: true,
-      products: products,
+      products: productsWithImageUrls,
     });
   } catch (error) {
     handleError(res, error, "Failed to fetch products");
